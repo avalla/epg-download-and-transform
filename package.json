@@ -4,6 +4,9 @@
   "description": "Scarica e trasforma il file in formato epg",
   "main": "index.js",
   "author": "avalla <valla.andrea@gmail.com>",
+  "scripts": {
+    "start": "node index.js"
+  },
   "license": "ISC",
   "dependencies": {
     "moment": "^2.11.1",

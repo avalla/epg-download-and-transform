@@ -6,7 +6,7 @@ var http = require('http')
     , moment = require('moment');
 
 var url = 'http://www.vuplus-community.net/rytec/rytecxmltvItaly.gz'
-    , filename = path.join(__dirname, 'source_epg.xml')
+    , filename = 'source_epg.xml'
     , output = 'epg.xml'
     , mapping = JSON.parse(fs.readFileSync(__dirname + '/mapping.json', 'utf8'))
     , dateFormat = 'YYYYMMDDHHmmss Z';
@@ -15,7 +15,7 @@ var channels = mapping.map(function(e) { return e.search });
 
 http.get(url, function(response) {
     var gunzip = zlib.createGunzip();
-    var stream = response.pipe(gunzip).pipe(fs.createWriteStream(filename));
+    var stream = response.pipe(gunzip).pipe(fs.createWriteStream(path.join(__dirname, filename)));
     stream.on('finish', function () {
         var parser = new xml2js.Parser();
         fs.readFile(filename, 'utf8', function(err, data) {
@@ -28,7 +28,6 @@ http.get(url, function(response) {
                             moment(value.$.start, dateFormat) <= moment().add(8, 'hours')
                         );
                 });
-
                 result.tv.channel = result.tv.channel.map(function(channel) {
                     mapping.forEach(function(e) {
                         if (channel.$.id == e.search) {
@@ -49,7 +48,7 @@ http.get(url, function(response) {
                 var builder = new xml2js.Builder();
                 var xml = builder.buildObject(result);
                 fs.writeFile(filepath, xml, function() {
-                    console.log(output + " written");
+                    console.log(path.join(__dirname, output) + " written");
                 });
             });
         });
