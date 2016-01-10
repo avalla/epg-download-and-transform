@@ -1,5 +1,5 @@
 {
-  "name": "epg",
+  "name": "epg-download-and-transform",
   "version": "1.0.0",
   "description": "Scarica e trasforma il file in formato epg",
   "main": "index.js",

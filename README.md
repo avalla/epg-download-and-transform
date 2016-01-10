@@ -10,7 +10,7 @@ Eseguire:
 ```
 $ npm start
 
-> epg@1.0.0 start /Users/andrea/dev/node/epg-download-and-transform
+> epg-download-and-transform@1.0.0 start /Users/andrea/dev/node/epg-download-and-transform
 > node index.js
 
 /Users/andrea/dev/node/epg-download-and-transform/epg.xml written
