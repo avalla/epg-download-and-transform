@@ -20,15 +20,9 @@ http.get(url, function(response) {
         var parser = new xml2js.Parser();
         fs.readFile(filename, 'utf8', function(err, data) {
             parser.parseString(data, function (err, result) {
-                result.tv.channel = result.tv.channel.filter(function(value) { return channels.indexOf(value.$.id) > 0; });
-                result.tv.programme = result.tv.programme.filter(function(value) {
-                    return channels.indexOf(value.$.channel) > 0 &&
-                        (
-                            moment(value.$.start, dateFormat) >= moment().subtract(12, 'hours') &&
-                            moment(value.$.start, dateFormat) <= moment().add(4, 'hours')
-                        );
-                });
-                result.tv.channel = result.tv.channel.map(function(channel) {
+                function filterChannels(value) { return channels.indexOf(value.$.id) > 0; };
+                function filterPrograms(value) { return channels.indexOf(value.$.channel) > 0 && moment(value.$.start, dateFormat) >= moment().subtract(12, 'hours') && moment(value.$.start, dateFormat) <= moment().add(4, 'hours') ; };
+                function renameChannels(channel) {
                     mapping.forEach(function(e) {
                         if (channel.$.id == e.search) {
                             channel.$.id = e.replace;
@@ -36,21 +30,30 @@ http.get(url, function(response) {
                         }
                     });
                     return channel;
-                });
-                result.tv.programme = result.tv.programme.map(function(program) {
+                }
+                function renamePrograms(program) {
                     mapping.forEach(function(e) {
                         if (program.$.channel == e.search) program.$.channel = e.replace;
                     });
                     return program;
-                });
+                };
+                result.tv.channel = result.tv.channel.filter(filterChannels);
+                result.tv.channel = result.tv.channel.map(renameChannels);
 
-                var filepath = path.normalize(path.join(__dirname, output));
-                var builder = new xml2js.Builder();
-                var xml = builder.buildObject(result);
-                fs.writeFile(filepath, xml, function() {
-                    console.log(path.join(__dirname, output) + " written");
-                });
+                result.tv.programme = result.tv.programme.filter(filterPrograms);
+                result.tv.programme = result.tv.programme.map(renamePrograms);
+
+                writeXml(output, result, writeCallback);
             });
         });
     });
 })
+
+function writeXml(file, doc, callback) {
+    var filepath = path.normalize(path.join(__dirname, file));
+    var builder = new xml2js.Builder();
+    var xml = builder.buildObject(doc);
+    fs.writeFile(filepath, xml, callback);
+}
+
+function writeCallback() { console.log(path.join(__dirname, output) + " written"); }
