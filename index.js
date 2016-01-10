@@ -24,8 +24,8 @@ http.get(url, function(response) {
                 result.tv.programme = result.tv.programme.filter(function(value) {
                     return channels.indexOf(value.$.channel) > 0 &&
                         (
-                            moment(value.$.start, dateFormat) >= moment().subtract(8, 'hours') &&
-                            moment(value.$.start, dateFormat) <= moment().add(8, 'hours')
+                            moment(value.$.start, dateFormat) >= moment().subtract(12, 'hours') &&
+                            moment(value.$.start, dateFormat) <= moment().add(4, 'hours')
                         );
                 });
                 result.tv.channel = result.tv.channel.map(function(channel) {
